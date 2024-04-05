@@ -58,7 +58,7 @@ Add this repository to your ESPHome config:
 
 ```yaml
 external_components:
-  - source: https://github.com/TzeWey/esphome-components
+  - source: github://TzeWey/esphome-components
     components: [mel_ac]
 ```
 
