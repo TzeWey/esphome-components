@@ -12,7 +12,7 @@ namespace esphome {
 namespace mel {
 namespace ac {
 
-static const uint32_t MEL_SUPPORTED_BAUD_RATES[] = { 2400, 4800, 9600 };
+static const uint32_t MEL_SUPPORTED_BAUD_RATES[] = {2400, 4800, 9600};
 
 // Temperature Limits
 static const uint8_t MEL_AC_TEMP_MIN = 16;  // Minimum Temperature in Celsius
@@ -324,9 +324,9 @@ class MelAirConditioner : public PollingComponent, public uart::UARTDevice, publ
   void set_connected(bool value) { this->ac_connected_ = value; }
   bool get_connected(void) { return this->ac_connected_; }
 
-  void restart_poll(void) {
+  void restart_poll(bool force = false) {
     const uint32_t now = millis();
-    if ((now - this->ac_poll_timestamp_) > this->ac_poll_refresh_rate_) {
+    if (force || (now - this->ac_poll_timestamp_) > this->ac_poll_refresh_rate_) {
       this->set_poll_flag(MEL_POLL_ALL);
       this->ac_poll_timestamp_ = now;
     }
@@ -345,7 +345,7 @@ class MelAirConditioner : public PollingComponent, public uart::UARTDevice, publ
   void process_response(void);
 
   void do_publish(void);
-  bool do_update(void);
+  bool do_control(void);
 
   void do_connect(void);
   void do_poll(void);
