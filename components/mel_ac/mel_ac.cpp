@@ -292,7 +292,7 @@ void MelAirConditioner::do_connect(void) {
   }
 }
 
-bool MelAirConditioner::do_update(void) {
+bool MelAirConditioner::do_control(void) {
   auto &params = this->set_params();
 
   if (!params.is_pending()) {
@@ -364,6 +364,9 @@ bool MelAirConditioner::do_update(void) {
   ESP_LOGV(TAG, "REQ> SET_PARAMS");
   this->conn_.send_command(MEL_COMMAND_FLAGS_SET, payload, sizeof(payload));
 
+  // Force poll restart to pull the latest unit states
+  this->restart_poll(true);
+
   return true;
 }
 
@@ -373,7 +376,7 @@ void MelAirConditioner::do_poll(void) {
     return;
   }
 
-  if (this->do_update()) {
+  if (this->do_control()) {
     return;
   }
 
