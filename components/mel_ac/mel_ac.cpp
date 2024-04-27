@@ -574,7 +574,6 @@ void MelAirConditioner::set_supported_modes(const std::set<climate::ClimateMode>
   this->traits_.set_supported_modes(modes);
   // Modes that are always available
   this->traits_.add_supported_mode(climate::CLIMATE_MODE_OFF);
-  this->traits_.add_supported_mode(climate::CLIMATE_MODE_AUTO);
 }
 
 void MelAirConditioner::set_supported_fan_modes(const std::set<climate::ClimateFanMode> &modes) {

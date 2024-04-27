@@ -205,7 +205,6 @@ climate:
 | supported_modes | Internal POWER | Internal MODE | Description      |
 | --------------- | -------------- | ------------- | ---------------- |
 | "OFF"           | "OFF"          | ---           | Always available |
-| "AUTO"          | "ON"           | "AUTO"        | Always available |
 | "HEAT_COOL"     | "ON"           | "AUTO"        |                  |
 | "COOL"          | "ON"           | "COOL"        |                  |
 | "HEAT"          | "ON"           | "HEAT"        |                  |
