@@ -111,7 +111,7 @@ void MelAirConditioner::process_response(void) {
         }
 
         // VANE HORZ
-        uint8_t vane_horz = res->payload[MEL_GET_PARAMS_OFFSET_VANE_HORZ];
+        uint8_t vane_horz = res->payload[MEL_GET_PARAMS_OFFSET_VANE_HORZ] & 0x0F;
         if (params.set_vane_horz(vane_horz)) {
           ESP_LOGV(TAG, "RES>   vane_horz: 0x%02X [%s]", vane_horz, params.get_vane_horz_name().c_str());
         } else {
@@ -119,7 +119,7 @@ void MelAirConditioner::process_response(void) {
         }
 
         // VANE HORZ FLAG
-        params.set_vane_horz_flag((vane_horz & 0x80) != 0);
+        params.set_vane_horz_flag((res->payload[MEL_GET_PARAMS_OFFSET_VANE_HORZ] & 0x80) != 0);
         ESP_LOGV(TAG, "RES>   vane_horz_flag: %s", TRUEFALSE(params.get_vane_horz_flag()));
 
         // TEMPERATURE TARGET
@@ -348,9 +348,11 @@ bool MelAirConditioner::do_control(void) {
   }
 
   if (params.get_vane_horz().has_value()) {
-    auto vane_horz = params.get_vane_horz().value();
-    payload[MEL_SET_PARAMS_OFFSET_VANE_HORZ] = (uint8_t) vane_horz;
+    auto vane_horz_flag = this->params().get_vane_horz_flag();
+    auto vane_horz = params.get_vane_horz().value() | (vane_horz_flag ? 0x80 : 0x00);
+    payload[MEL_SET_PARAMS_OFFSET_VANE_HORZ] = (uint8_t) (vane_horz & 0xFF);
     control |= MEL_COMMAND_SET_VANE_HORZ;
+    ESP_LOGD(TAG, "CONTROL> vane_horz_flag: %s", TRUEFALSE(vane_horz_flag));
     ESP_LOGD(TAG, "CONTROL> vane_horz: 0x%02X [%s]", vane_horz, params.get_vane_horz_name().c_str());
   }
 
