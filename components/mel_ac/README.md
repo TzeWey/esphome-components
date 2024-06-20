@@ -33,6 +33,8 @@ It should work with other reported models that has the `CN105` connector.
 Functionality of this component has been verified on the following units:
 
 - MSXY-FN10VE (baud_rate: 2400)
+- MSXY-FP10VG (baud_rate: 2400)
+- MSXY-FP18VG (baud_rate: 2400)
 
 ## Usage
 
@@ -77,8 +79,8 @@ Example Configuration:
 ```yaml
 uart:
   id: CN105
-  tx_pin: 9
-  rx_pin: 10
+  tx_pin: 21
+  rx_pin: 20
   baud_rate: 2400
   parity: EVEN
 ```
@@ -93,7 +95,7 @@ Example Configuration:
 ```yaml
 climate:
   - platform: mel_ac
-    name: "TEST AC"
+    name: "Control"
     uart_id: CN105
 ```
 
@@ -105,8 +107,8 @@ over-the-air updates. You'll need to create a `secrets.yaml` file inside of your
 
 ```yaml
 substitutions:
-  name: test
-  friendly_name: TEST
+  name: esphome-web-xxxxxx
+  friendly_name: Living Room AC
 
 esphome:
   name: ${name}
@@ -132,6 +134,7 @@ api:
 
 # Allow Over-The-Air updates
 ota:
+  - platform: esphome
 
 # Allow provisioning Wi-Fi via serial
 improv_serial:
@@ -155,14 +158,14 @@ external_components:
 
 uart:
   id: CN105
-  tx_pin: 9
-  rx_pin: 10
+  tx_pin: 21
+  rx_pin: 20
   baud_rate: 2400
   parity: EVEN
 
 climate:
   - platform: mel_ac
-    name: "AC"
+    name: "Control"
     uart_id: CN105
     # startup_delay: 10s # delay startup to debug component init from logs
     supported_modes:
