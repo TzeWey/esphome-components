@@ -66,7 +66,7 @@ external_components:
 
 ### 3. Configure the Component
 
-Configure the `UART` that is connected to the CN105 connector with the following
+Configure the `uart` that is connected to the CN105 connector with the following
 options:
 
 | Option    | Supported Values |
@@ -87,7 +87,7 @@ uart:
 
 > If communication to the unit fails, try changing to another supported baud rate.
 
-Configure the `mel_ac` component to reference the `UART` component created above
+Configure the `mel_ac` component to reference the `uart` component created above
 by its `id`.
 
 Example Configuration:
