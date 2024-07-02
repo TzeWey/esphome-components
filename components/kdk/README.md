@@ -178,13 +178,17 @@ uart:
 kdk:
   uart_id: KDK_CN5
 
-light:
-  - platform: kdk
-    name: "Light"
-
 fan:
   - platform: kdk
     name: "Fan"
+
+light:
+  - platform: kdk
+    name: "Light"
+    type: MAIN_LIGHT
+  - platform: kdk
+    name: "Night Light"
+    type: NIGHT_LIGHT
 ```
 
 # References
