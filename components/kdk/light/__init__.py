@@ -3,6 +3,7 @@ import esphome.config_validation as cv
 from esphome.components import light
 from esphome.const import (
     CONF_OUTPUT_ID,
+    CONF_TYPE,
     CONF_COLD_WHITE_COLOR_TEMPERATURE,
     CONF_WARM_WHITE_COLOR_TEMPERATURE,
 )
@@ -17,12 +18,18 @@ CODEOWNERS = ["TzeWey"]
 DEPENDENCIES = ["kdk"]
 
 KdkLight = kdk_ns.class_("KdkLight", light.LightOutput)
+KdkLightType = kdk_ns.enum("KdkLightType", is_class=True)
 
+LIGHT_TYPE = {
+    "MAIN_LIGHT": KdkLightType.MAIN_LIGHT,
+    "NIGHT_LIGHT": KdkLightType.NIGHT_LIGHT,
+}
 
 CONFIG_SCHEMA = cv.All(
     light.LIGHT_SCHEMA.extend(
         {
             cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(KdkLight),
+            cv.Optional(CONF_TYPE, default="MAIN_LIGHT"): cv.enum(LIGHT_TYPE, upper=True),
             cv.Optional(CONF_COLD_WHITE_COLOR_TEMPERATURE, default="6000K"): cv.color_temperature,
             cv.Optional(CONF_WARM_WHITE_COLOR_TEMPERATURE, default="2700K"): cv.color_temperature,
         }
@@ -44,3 +51,5 @@ async def to_code(config):
         cg.add(var.set_cold_white_temperature(cold_white_color_temperature))
     if warm_white_color_temperature := config.get(CONF_WARM_WHITE_COLOR_TEMPERATURE):
         cg.add(var.set_warm_white_temperature(warm_white_color_temperature))
+    if light_type := config.get(CONF_TYPE):
+        cg.add(var.set_type(light_type))

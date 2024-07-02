@@ -7,10 +7,16 @@
 namespace esphome {
 namespace kdk {
 
+enum class KdkLightType {
+  MAIN_LIGHT,
+  NIGHT_LIGHT,
+};
+
 class KdkLight : public light::LightOutput, public KdkConnectionClient {
  protected:
   light::LightState *state_{nullptr};
 
+  KdkLightType type_{KdkLightType::MAIN_LIGHT};
   float cold_white_temperature_{0};
   float warm_white_temperature_{0};
 
@@ -24,6 +30,9 @@ class KdkLight : public light::LightOutput, public KdkConnectionClient {
 
   std::string name() override { return "KDK Light"; }
 
+  KdkLightType to_light_type(const uint8_t light_mode) const;
+  uint8_t from_light_type(const KdkLightType v) const;
+
   bool to_state(const uint8_t light_state, const uint8_t light_mode) const;
   uint8_t from_state(const bool v) const;
 
@@ -33,10 +42,13 @@ class KdkLight : public light::LightOutput, public KdkConnectionClient {
   float to_color(const uint8_t b) const;
   uint8_t from_color(const float v) const;
 
+  uint8_t snap_night_light_brightness(const uint8_t v) const;
+
   bool is_valid(const std::vector<uint8_t> &data) const;
   bool is_state_changed(uint8_t mode, uint8_t state, uint8_t brightness, uint8_t color);
 
  public:
+  void set_type(KdkLightType type) { type_ = type; }
   void set_cold_white_temperature(float cold_white_temperature) { cold_white_temperature_ = cold_white_temperature; }
   void set_warm_white_temperature(float warm_white_temperature) { warm_white_temperature_ = warm_white_temperature; }
 
