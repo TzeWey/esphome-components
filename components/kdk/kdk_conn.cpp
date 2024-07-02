@@ -348,7 +348,7 @@ void KdkConnectionManager::parse_parameter_response(const uint8_t *buffer) {
       param.data[j] = buffer[index++];
     }
 
-    ESP_LOGV(TAG, "PARAM> ID=%04X, SIZE=%d, DATA=%s", id, length, this->hex2str(param.data).c_str());
+    ESP_LOGD(TAG, "PARAM> GET ID=%04X, SIZE=%d, DATA=%s", id, length, this->hex2str(param.data).c_str());
   }
 }
 
@@ -564,6 +564,8 @@ void KdkConnectionManager::send_message_0810(std::vector<struct KdkParamUpdate> 
     for (auto b : value.data) {
       payload.push_back(b);
     }
+
+    ESP_LOGD(TAG, "PARAM> SET ID=%04X, SIZE=%d, DATA=%s", id, value.data.size(), this->hex2str(value.data).c_str());
   }
 
   this->send_request(0x0810, payload.data(), payload.size());
