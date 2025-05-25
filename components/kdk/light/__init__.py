@@ -26,7 +26,7 @@ LIGHT_TYPE = {
 }
 
 CONFIG_SCHEMA = cv.All(
-    light.LIGHT_SCHEMA.extend(
+    light.light_schema(KdkLight).extend(
         {
             cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(KdkLight),
             cv.Optional(CONF_TYPE, default="MAIN_LIGHT"): cv.enum(LIGHT_TYPE, upper=True),

@@ -18,7 +18,7 @@ KdkFan = kdk_ns.class_("KdkFan", fan.Fan)
 
 
 CONFIG_SCHEMA = cv.All(
-    fan.FAN_SCHEMA.extend(
+    fan.fan_schema(KdkFan).extend(
         {
             cv.GenerateID(): cv.declare_id(KdkFan),
         }
