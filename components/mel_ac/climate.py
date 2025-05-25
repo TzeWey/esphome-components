@@ -2,7 +2,6 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import climate, uart
 from esphome.const import (
-    CONF_ID,
     CONF_MAX_REFRESH_RATE,
     CONF_STARTUP_DELAY,
     CONF_VISUAL,
@@ -113,8 +112,7 @@ CONFIG_SCHEMA = cv.All(
 
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_ID])
-    await cg.register_component(var, config)
+    var = await climate.new_climate(config)
     await uart.register_uart_device(var, config)
     await climate.register_climate(var, config)
 

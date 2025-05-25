@@ -2,7 +2,6 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import light
 from esphome.const import (
-    CONF_OUTPUT_ID,
     CONF_TYPE,
     CONF_COLD_WHITE_COLOR_TEMPERATURE,
     CONF_WARM_WHITE_COLOR_TEMPERATURE,
@@ -26,9 +25,8 @@ LIGHT_TYPE = {
 }
 
 CONFIG_SCHEMA = cv.All(
-    light.light_schema(KdkLight).extend(
+    light.light_schema(KdkLight, light.LightType.BRIGHTNESS_ONLY).extend(
         {
-            cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(KdkLight),
             cv.Optional(CONF_TYPE, default="MAIN_LIGHT"): cv.enum(LIGHT_TYPE, upper=True),
             cv.Optional(CONF_COLD_WHITE_COLOR_TEMPERATURE, default="6000K"): cv.color_temperature,
             cv.Optional(CONF_WARM_WHITE_COLOR_TEMPERATURE, default="2700K"): cv.color_temperature,
@@ -43,8 +41,7 @@ CONFIG_SCHEMA = cv.All(
 
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_OUTPUT_ID])
-    await light.register_light(var, config)
+    var = await light.new_light(config)
     await register_kdk_connection_client(var, config)
 
     if cold_white_color_temperature := config.get(CONF_COLD_WHITE_COLOR_TEMPERATURE):
