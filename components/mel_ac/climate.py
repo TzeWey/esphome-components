@@ -93,7 +93,7 @@ def validate_visual(config):
 
 
 CONFIG_SCHEMA = cv.All(
-    climate.CLIMATE_SCHEMA.extend(
+    climate.climate_schema(MelAirConditioner).extend(
         {
             cv.GenerateID(): cv.declare_id(MelAirConditioner),
             cv.Optional(CONF_MAX_REFRESH_RATE, default="1s"): cv.positive_time_period_milliseconds,
