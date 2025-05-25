@@ -2,7 +2,6 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import climate, uart
 from esphome.const import (
-    CONF_ID,
     CONF_MAX_REFRESH_RATE,
     CONF_STARTUP_DELAY,
     CONF_VISUAL,
@@ -93,7 +92,7 @@ def validate_visual(config):
 
 
 CONFIG_SCHEMA = cv.All(
-    climate.CLIMATE_SCHEMA.extend(
+    climate.climate_schema(MelAirConditioner).extend(
         {
             cv.GenerateID(): cv.declare_id(MelAirConditioner),
             cv.Optional(CONF_MAX_REFRESH_RATE, default="1s"): cv.positive_time_period_milliseconds,
@@ -113,8 +112,7 @@ CONFIG_SCHEMA = cv.All(
 
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_ID])
-    await cg.register_component(var, config)
+    var = await climate.new_climate(config)
     await uart.register_uart_device(var, config)
     await climate.register_climate(var, config)
 
