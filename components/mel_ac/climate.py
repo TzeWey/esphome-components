@@ -113,8 +113,8 @@ CONFIG_SCHEMA = cv.All(
 
 async def to_code(config):
     var = await climate.new_climate(config)
+    await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
-    await climate.register_climate(var, config)
 
     cg.add(var.set_poll_refresh_rate(config[CONF_MAX_REFRESH_RATE]))
     cg.add(var.set_startup_delay(config[CONF_STARTUP_DELAY]))
