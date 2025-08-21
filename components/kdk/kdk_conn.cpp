@@ -157,7 +157,7 @@ void KdkConnectionManager::receiver_process_byte(uint8_t byte) {
 
   // Clear flag if message is a command response
   if (IS_RESPONSE_MESSAGE(cmd->command)) {
-    this->state_.waiting_response = false;
+    this->clear_waiting_response();
   }
 }
 
@@ -451,13 +451,17 @@ void KdkConnectionManager::process_response_0110(void) {
 
   for (int i = 0; i < count; i++) {
     auto param_buffer = &payload[10 + (i * 4)];
+    auto param_id = (uint16_t) (param_buffer[0] | (param_buffer[1] << 8));  // 2-bytes
+    auto param_metadata = param_buffer[2];                                  // 1-byte
+    auto param_size = param_buffer[3];
+
     struct KdkParam param = {
-        .id = (uint16_t) (param_buffer[0] | (param_buffer[1] << 8)),  // 2-bytes
-        .metadata = param_buffer[2],                                  // 1-byte
-        .size = param_buffer[3],                                      // 1-byte
-        .data = {0},
+        .id = param_id,                                  // 2-bytes
+        .metadata = param_metadata,                      // 1-byte
+        .size = param_size,                              // 1-byte
+        .data = std::vector<uint8_t>(param_size, 0x55),  // Data size is defined by the 1-byte size
     };
-    param.data.resize(param.size, 0);
+
     this->state_.parameters.insert({param.id, param});
     ESP_LOGV(TAG, "CMD0110> PARAM %-2d : ID=%04X, SIZE=%-3d, META=%02X", i, param.id, param.size, param.metadata);
   }
@@ -532,6 +536,8 @@ void KdkConnectionManager::send_message_0810(std::vector<struct KdkParamUpdate> 
    * E1                // Checksum
    */
 
+  std::map<uint16_t, std::vector<uint8_t>> param_update_map;  // Unique parameter updates to be sent
+
   // Validate parameters
   auto &parameters = this->state_.parameters;
 
@@ -548,6 +554,14 @@ void KdkConnectionManager::send_message_0810(std::vector<struct KdkParamUpdate> 
                size);
       return;
     }
+
+    // Update if duplicate, else insert
+    auto param_it = param_update_map.find(id);
+    if (param_it != param_update_map.end()) {
+      param_it->second = value.data;  // Overwrite existing data
+    } else {
+      param_update_map.insert({id, value.data});  // Insert new parameter update
+    }
   }
 
   std::vector<uint8_t> payload(KDK_MSG_TYPE_SIZE + KDK_MSG_TABLE_ID_SIZE + KDK_MSG_PARAM_COUNT_SIZE);
@@ -556,16 +570,17 @@ void KdkConnectionManager::send_message_0810(std::vector<struct KdkParamUpdate> 
   this->fill_parameter_table_id(&payload[1]);  // 3-bytes
   payload[4] = values.size();
 
-  for (auto &value : values) {
-    auto id = value.id;
+  for (auto values_it = param_update_map.begin(); values_it != param_update_map.end(); values_it++) {
+    auto id = values_it->first;
+    auto &value = values_it->second;
     payload.push_back((id >> 0) & 0xFF);
     payload.push_back((id >> 8) & 0xFF);
-    payload.push_back((uint8_t) (value.data.size() & 0xFF));
-    for (auto b : value.data) {
+    payload.push_back((uint8_t) (value.size() & 0xFF));
+    for (auto b : value) {
       payload.push_back(b);
     }
 
-    ESP_LOGD(TAG, "PARAM> SET ID=%04X, SIZE=%d, DATA=%s", id, value.data.size(), this->hex2str(value.data).c_str());
+    ESP_LOGD(TAG, "PARAM> SET ID=%04X, SIZE=%d, DATA=%s", id, value.size(), this->hex2str(value).c_str());
   }
 
   this->send_request(0x0810, payload.data(), payload.size());
@@ -737,7 +752,7 @@ void KdkConnectionManager::process_message(void) {
     case 0x0A10:
       return this->process_message_0A10(msg);
     default:
-      ESP_LOGW(TAG, "MSG> Unhandled REQUEST CMD=%04X", msg->command);
+      ESP_LOGW(TAG, "MSG> Unhandled MESSAGE CMD=%04X", msg->command);
   }
 }
 
@@ -1278,6 +1293,7 @@ const std::vector<uint8_t> KdkConnectionManager::get_parameter_data(uint16_t id)
 
 void KdkConnectionManager::update_parameter_data(std::vector<struct KdkParamUpdate> parameters) {
   auto &update_list = this->state_.pending_parameter_update_list;
+  update_list.clear();  // Only single batch update is supported
   update_list.insert(update_list.end(), parameters.begin(), parameters.end());
 }
 

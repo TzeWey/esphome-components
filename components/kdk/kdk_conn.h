@@ -23,7 +23,7 @@ static const uint32_t KDK_RECV_TIMEOUT = 300;  // Message response timeout in ms
 static const uint32_t KDK_SEND_MAX_RETRY = 5;  // Number of retry attempts when a response is not received
 
 static const uint32_t KDK_DEFAULT_POLL_INTERVAL = 5000;
-static const uint32_t KDK_WAIT_SYNC_TIMEOUT = 10000;
+static const uint32_t KDK_WAIT_SYNC_TIMEOUT = 7500;
 
 // KDK Frame Constants
 static const uint8_t KDK_MESSAGE_SYNC = 0x66;   // First byte sent by the device on power up
@@ -220,6 +220,7 @@ class KdkConnectionManager : public PollingComponent, public uart::UARTDevice {
   void clear_message_pending(void) { this->state_.message_pending = false; };
 
   bool is_waiting_response(void) { return this->state_.waiting_response; }
+  void clear_waiting_response(void) { this->state_.waiting_response = false; };
 
   bool is_message_response(uint16_t command);
 
@@ -274,7 +275,7 @@ class KdkConnectionManager : public PollingComponent, public uart::UARTDevice {
 
   bool is_ready(void) { return this->fsm_.state >= KDK_COMM_STATE_INIT_DONE; };
 
-  KdkConnectionManager(){};
+  KdkConnectionManager() {};
 };
 
 }  // namespace kdk

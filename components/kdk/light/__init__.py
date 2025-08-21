@@ -5,6 +5,7 @@ from esphome.const import (
     CONF_TYPE,
     CONF_COLD_WHITE_COLOR_TEMPERATURE,
     CONF_WARM_WHITE_COLOR_TEMPERATURE,
+    CONF_DEFAULT_TRANSITION_LENGTH,
 )
 
 from .. import (
@@ -30,6 +31,7 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_TYPE, default="MAIN_LIGHT"): cv.enum(LIGHT_TYPE, upper=True),
             cv.Optional(CONF_COLD_WHITE_COLOR_TEMPERATURE, default="6000K"): cv.color_temperature,
             cv.Optional(CONF_WARM_WHITE_COLOR_TEMPERATURE, default="2700K"): cv.color_temperature,
+            cv.Optional(CONF_DEFAULT_TRANSITION_LENGTH, default="0s"): cv.positive_time_period_milliseconds,
         }
     )
     .extend(KDK_CLIENT_SCHEMA),
