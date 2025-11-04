@@ -25,7 +25,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_KDK_CONN_POLL_INTERVAL, default="15s"): cv.positive_time_period_milliseconds,
         }
     )
-    .extend(cv.polling_component_schema("100ms"))
+    .extend(cv.polling_component_schema("5ms"))
     .extend(uart.UART_DEVICE_SCHEMA)
 )
 
