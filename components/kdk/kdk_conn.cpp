@@ -734,9 +734,6 @@ void KdkConnectionManager::process_message(void) {
     return;
   }
 
-  // Always clear to unblock new message reception
-  this->clear_message_pending();
-
   auto msg = this->message();
 
   if (IS_RESPONSE_MESSAGE(msg->command) && !this->is_waiting_response()) {
@@ -745,6 +742,9 @@ void KdkConnectionManager::process_message(void) {
     ESP_LOGW(TAG, "MSG> Unhandled RESPONSE CMD=%04X", msg->command);
     return;
   }
+
+  // Always clear to unblock new message reception
+  this->clear_message_pending();
 
   switch (msg->command) {
     case 0x0101:
