@@ -21,7 +21,7 @@ CONFIG_SCHEMA = (
     cv.COMPONENT_SCHEMA.extend(
         {
             cv.GenerateID(): cv.declare_id(KdkConnectionManager),
-            cv.Optional(CONF_RECEIVE_TIMEOUT, default="500ms"): cv.positive_time_period_milliseconds,
+            cv.Optional(CONF_RECEIVE_TIMEOUT, default="250ms"): cv.positive_time_period_milliseconds,
             cv.Optional(CONF_KDK_CONN_POLL_INTERVAL, default="15s"): cv.positive_time_period_milliseconds,
         }
     )
