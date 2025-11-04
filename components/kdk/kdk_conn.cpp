@@ -228,13 +228,13 @@ void KdkConnectionManager::transmit_message(void) {
   this->tx_.timestamp = millis();
 }
 
-void KdkConnectionManager::check_response_timeout(const uint32_t now) {
+void KdkConnectionManager::check_response_timeout() {
   // Clear the waiting response state if the last request was a long time ago
   if (!this->state_.waiting_response) {
     return;
   }
 
-  const uint32_t elapsed = (now - this->tx_.timestamp);
+  const uint32_t elapsed = (millis() - this->tx_.timestamp);
   if (elapsed < this->cfg_.receive_timeout) {
     return;
   }
@@ -1259,8 +1259,6 @@ void KdkConnectionManager::dump_config() {
 }
 
 void KdkConnectionManager::update() {
-  const uint32_t now = millis();
-
   // Process received bytes
   while (this->available() && (!this->is_message_pending())) {
     uint8_t byte;
@@ -1269,7 +1267,7 @@ void KdkConnectionManager::update() {
   }
 
   // Check response timeout
-  this->check_response_timeout(now);
+  this->check_response_timeout();
 
   this->fsm_run();
 

@@ -213,7 +213,7 @@ class KdkConnectionManager : public PollingComponent, public uart::UARTDevice {
 
   void transmit_message(void);
 
-  void check_response_timeout(const uint32_t now);
+  void check_response_timeout(void);
 
   // Message Helpers
   bool is_message_pending(void) { return this->state_.message_pending; };
