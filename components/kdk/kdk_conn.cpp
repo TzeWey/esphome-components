@@ -1271,9 +1271,9 @@ void KdkConnectionManager::update() {
   // Check response timeout
   this->check_response_timeout(now);
 
-  this->fsm_run();
-
   this->process_message();
+
+  this->fsm_run();
 }
 
 void KdkConnectionManager::register_client(KdkConnectionClient *client) {
