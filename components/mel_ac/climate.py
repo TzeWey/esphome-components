@@ -105,7 +105,7 @@ CONFIG_SCHEMA = cv.All(
                         ): cv.ensure_list(cv.enum(SUPPORTED_SWING_MODES, upper=True)),
         }
     )
-    .extend(cv.polling_component_schema("100ms"))
+    .extend(cv.polling_component_schema("25ms"))
     .extend(uart.UART_DEVICE_SCHEMA),
     validate_visual,
 )
