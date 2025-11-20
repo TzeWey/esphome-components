@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include <set>
 
 #include "esphome/core/component.h"
 #include "esphome/components/climate/climate.h"
