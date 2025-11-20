@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 
 #include "esphome/core/component.h"
 #include "esphome/components/climate/climate.h"
@@ -360,9 +361,9 @@ class MelAirConditioner : public PollingComponent, public uart::UARTDevice, publ
   void set_poll_refresh_rate(uint32_t value) { this->ac_poll_refresh_rate_ = value; }
   void set_startup_delay(uint32_t value) { this->startup_delay_ = value; }
 
-  void set_supported_modes(const std::set<climate::ClimateMode> &modes);
-  void set_supported_fan_modes(const std::set<climate::ClimateFanMode> &modes);
-  void set_supported_swing_modes(const std::set<climate::ClimateSwingMode> &modes);
+  void set_supported_modes(climate::ClimateModeMask modes);
+  void set_supported_fan_modes(climate::ClimateFanModeMask fan_modes);
+  void set_supported_swing_modes(climate::ClimateSwingModeMask swing_modes);
 
   MelAirConditioner();
 };

@@ -572,14 +572,14 @@ void MelAirConditioner::update() {
   this->do_poll();
 }
 
-void MelAirConditioner::set_supported_modes(const std::set<climate::ClimateMode> &modes) {
+void MelAirConditioner::set_supported_modes(climate::ClimateModeMask modes) {
   this->traits_.set_supported_modes(modes);
   // Modes that are always available
   this->traits_.add_supported_mode(climate::CLIMATE_MODE_OFF);
 }
 
-void MelAirConditioner::set_supported_fan_modes(const std::set<climate::ClimateFanMode> &modes) {
-  this->traits_.set_supported_fan_modes(modes);
+void MelAirConditioner::set_supported_fan_modes(climate::ClimateFanModeMask fan_modes) {
+  this->traits_.set_supported_fan_modes(fan_modes);
   // Modes that are always available
   this->traits_.add_supported_fan_mode(climate::CLIMATE_FAN_AUTO);
   this->traits_.add_supported_fan_mode(climate::CLIMATE_FAN_LOW);
@@ -587,16 +587,16 @@ void MelAirConditioner::set_supported_fan_modes(const std::set<climate::ClimateF
   this->traits_.add_supported_fan_mode(climate::CLIMATE_FAN_HIGH);
 }
 
-void MelAirConditioner::set_supported_swing_modes(const std::set<climate::ClimateSwingMode> &modes) {
-  this->traits_.set_supported_swing_modes(modes);
+void MelAirConditioner::set_supported_swing_modes(climate::ClimateSwingModeMask swing_modes) {
+  this->traits_.set_supported_swing_modes(swing_modes);
   // Modes that are always available
   this->traits_.add_supported_swing_mode(climate::CLIMATE_SWING_OFF);
 }
 
 MelAirConditioner::MelAirConditioner() : conn_(this) {
   this->traits_ = climate::ClimateTraits();
-  this->traits_.set_supports_action(true);
-  this->traits_.set_supports_current_temperature(true);
+  this->traits_.add_feature_flags(climate::CLIMATE_SUPPORTS_ACTION);
+  this->traits_.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
 };
 
 }  // namespace ac
